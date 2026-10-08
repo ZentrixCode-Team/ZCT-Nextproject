@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_shared_navbar_links",
+  "info": {
+    "displayName": "Navbar Link"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "openNewTab": {
+      "type": "boolean"
+    }
+  },
+  "config": {}
+}

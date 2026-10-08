@@ -1,0 +1,51 @@
+{
+  "kind": "singleType",
+  "collectionName": "site_settings",
+  "info": {
+    "singularName": "site-setting",
+    "pluralName": "site-settings",
+    "displayName": "Site Settings"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "siteName": {
+      "type": "string"
+    },
+    "siteDescription": {
+      "type": "text"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files"
+      ]
+    },
+    "navbarLinks": {
+      "type": "component",
+      "component": "shared.navbar-link",
+      "repeatable": true
+    },
+    "showContactButton": {
+      "type": "boolean"
+    },
+    "contactText": {
+      "type": "string"
+    },
+    "contactUrl": {
+      "type": "string"
+    },
+    "footerColumns": {
+      "type": "component",
+      "component": "shared.footer-column",
+      "repeatable": true
+    },
+    "copyright": {
+      "type": "string"
+    }
+  }
+}

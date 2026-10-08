@@ -1,0 +1,55 @@
+{
+  "kind": "singleType",
+  "collectionName": "abouts",
+  "info": {
+    "singularName": "about",
+    "pluralName": "abouts",
+    "displayName": "About",
+    "description": "Write about yourself and the content you create"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "heroTitle": {
+      "type": "string"
+    },
+    "heroHighlight": {
+      "type": "string"
+    },
+    "storyTitle": {
+      "type": "string"
+    },
+    "storyContent": {
+      "type": "blocks"
+    },
+    "qualityTitle": {
+      "type": "string"
+    },
+    "qualityDescription": {
+      "type": "text"
+    },
+    "simplicityTitle": {
+      "type": "string"
+    },
+    "simplicityDescription": {
+      "type": "text"
+    },
+    "designTitle": {
+      "type": "string"
+    },
+    "designDescription": {
+      "type": "text"
+    },
+    "ctaTitle": {
+      "type": "string"
+    },
+    "ctaDescription": {
+      "type": "text"
+    }
+  }
+}
