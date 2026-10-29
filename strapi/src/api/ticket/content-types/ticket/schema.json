@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "tickets",
+  "info": {
+    "singularName": "ticket",
+    "pluralName": "tickets",
+    "displayName": "ticket"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "message": {
+      "type": "text",
+      "required": true
+    },
+    "ticketStatus": {
+      "type": "enumeration",
+      "default": "open",
+      "enum": [
+        "open",
+        "in-progress",
+        "clodes"
+      ]
+    },
+    "priority": {
+      "type": "enumeration",
+      "default": "medium",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "tickets"
+    },
+    "ticket_replies": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::ticket-reply.ticket-reply",
+      "mappedBy": "ticket"
+    }
+  }
+}

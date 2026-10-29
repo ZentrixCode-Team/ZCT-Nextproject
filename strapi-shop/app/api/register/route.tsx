@@ -1,65 +1,48 @@
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
+export async function POST(request) {
   try {
     const body = await request.json();
-    const { username, email, password } = body;
+    const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL;
 
-    if (
-      typeof username !== "string" ||
-      typeof email !== "string" ||
-      typeof password !== "string"
-    ) {
+    if (!strapiUrl) {
       return NextResponse.json(
-        {
-          message: "The provided information is invalid.",
-        },
-        {
-          status: 400,
-        },
+        { message: "آدرس Strapi در متغیرهای محیطی تعریف نشده است." },
+        { status: 500 }
       );
     }
 
-    const response = await fetch(
-      `${process.env.STRAPI_URL}/api/auth/local/register`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-        }),
+
+    const response = await fetch(`${strapiUrl}/api/auth/local/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({
+        username: body.username,
+        email: body.email,
+        password: body.password,
+      }),
+    });
 
     const data = await response.json();
 
+
     if (!response.ok) {
       return NextResponse.json(
-        {
-          message: data?.error?.message || "Registration failed.",
-        },
-        {
-          status: response.status,
-        },
+        { message: data.error?.message || "خطا در ثبت‌نام" },
+        { status: response.status }
       );
     }
 
-    return NextResponse.json({
-      message: "Registration successful.",
-      user: data.user,
-    });
-  } catch {
+    
+    return NextResponse.json(data, { status: 200 });
+
+  } catch (error) {
+    console.error("خطای سرور در ثبت‌نام:", error);
     return NextResponse.json(
-      {
-        message: "Unable to connect to the server.",
-      },
-      {
-        status: 500,
-      },
+      { message: "خطای داخلی سرور" },
+      { status: 500 }
     );
   }
 }

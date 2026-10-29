@@ -23,11 +23,11 @@ const deniedExecutableTypes = [
 ];
 
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin => ({
-  'users-permissions': {
+   'users-permissions': {
     config: {
       jwtManagement: 'refresh',
       sessions: {
-        httpOnly: true,
+        httpOnly: false,
       },
     },
   },
@@ -36,6 +36,23 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin =>
       security: {
         allowedTypes: allowedMediaTypes,
         deniedTypes: deniedExecutableTypes,
+      },
+    },
+  },
+  email: {
+    config: {
+      provider: 'nodemailer',
+      providerOptions: {
+        host: env('SMTP_HOST'),
+        port: env.int('SMTP_PORT', 587),
+        auth: {
+          user: env('SMTP_USER'),
+          pass: env('SMTP_PASS'),
+        },
+      },
+      settings: {
+        defaultFrom: env('SMTP_USER'),
+        defaultReplyTo: env('SMTP_USER'),
       },
     },
   },

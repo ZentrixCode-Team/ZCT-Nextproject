@@ -2,6 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
+import { strapifetch } from "@/lib/strapi";
+import type { Ticket } from "@/lib/ticket-types";
+import { StatusBadge, formatDate } from "@/lib/tickets";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -15,11 +18,31 @@ export default async function DashboardPage() {
     session.user?.email ||
     "NOVA User";
 
+  // Tickets
+  let tickets: Ticket[] = [];
+  let ticketsUnavailable = false;
+
+  const token = session.user?.strapiToken;
+
+  if (token) {
+    try {
+      const res = await strapifetch<{ data: Ticket[] }>("/api/tickets", token, {
+        cache: "no-store",
+      });
+      tickets = res.data;
+    } catch {
+      ticketsUnavailable = true;
+    }
+  } else {
+    ticketsUnavailable = true;
+  }
+
+  const openCount = tickets.filter((t) => t.ticketStatus !== "closed").length;
+  const recentTickets = tickets.slice(0, 3);
+
   return (
     <main className="min-h-[calc(100vh-80px)] bg-[#05070a] px-5 py-12 text-white sm:px-8 lg:px-10">
       <div className="mx-auto max-w-7xl">
-
-        {/* Header */}
 
         <div className="mb-10">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">
@@ -35,7 +58,6 @@ export default async function DashboardPage() {
           </p>
         </div>
 
-        {/* Account Card */}
 
         <section className="mb-6 rounded-3xl border border-white/[0.07] bg-white/[0.025] p-6 shadow-2xl shadow-black/20">
           <div className="mb-6 flex items-center justify-between">
@@ -77,7 +99,83 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        {/* Quick Actions */}
+     
+        <section className="mb-6 rounded-3xl border border-white/[0.07] bg-white/[0.025] p-6 shadow-2xl shadow-black/20">
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-600">
+                Support
+              </p>
+
+              <h2 className="mt-2 text-lg font-bold text-white">
+                Support Tickets
+              </h2>
+
+              <p className="mt-1 text-xs text-slate-600">
+                {ticketsUnavailable
+                  ? "Tickets are unavailable right now."
+                  : `${openCount} open · ${tickets.length} total`}
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+              <Link
+                href="/dashboard/tickets"
+                className="rounded-full border border-white/[0.07] px-4 py-2 text-xs font-semibold text-slate-300 transition hover:border-white/20 hover:bg-white/[0.04]"
+              >
+                View all
+              </Link>
+
+              <Link
+                href="/dashboard/tickets/new"
+                className="rounded-full bg-cyan-400 px-4 py-2 text-xs font-bold text-black transition hover:bg-cyan-300"
+              >
+                New ticket
+              </Link>
+            </div>
+          </div>
+
+          {ticketsUnavailable ? (
+            <div className="rounded-2xl border border-white/[0.05] bg-black/20 p-4">
+              <p className="text-xs leading-5 text-slate-500">
+                If this keeps happening, please log out and log in again.
+              </p>
+            </div>
+          ) : recentTickets.length === 0 ? (
+            <div className="rounded-2xl border border-white/[0.05] bg-black/20 p-4">
+              <p className="text-xs leading-5 text-slate-500">
+                You have no tickets yet. Need help? Open a new ticket and our
+                team will get back to you.
+              </p>
+            </div>
+          ) : (
+            <ul className="space-y-3">
+              {recentTickets.map((ticket) => (
+                <li key={ticket.documentId}>
+                  <Link
+                    href={`/dashboard/tickets/${ticket.documentId}`}
+                    className="flex items-center justify-between gap-4 rounded-2xl border border-white/[0.05] bg-black/20 p-4 transition hover:border-cyan-400/20 hover:bg-white/[0.04]"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-slate-200">
+                        {ticket.title}
+                      </p>
+
+                      <p className="mt-1 text-[11px] text-slate-600">
+                        {formatDate(ticket.createdAt)} ·{" "}
+                        {ticket.ticket_replies?.length ?? 0} replies
+                      </p>
+                    </div>
+
+                    <StatusBadge status={ticket.ticketStatus} />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+       
 
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 
